@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kodeeboyzz Tour · Phú Quốc</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root{
+    --sea:#0b6e78; --sea-deep:#064149; --sand:#f7efe1; --coral:#ff6b4a;
+    --sun:#ffb02e; --ink:#12242a; --mute:#5c7178; --line:#e3d8c4; --card:#fff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--sand);color:var(--ink);padding-bottom:88px}
+  .hero{position:relative;padding:22px 20px 24px;background:linear-gradient(160deg,var(--sea),var(--sea-deep));color:#fff;border-radius:0 0 28px 28px;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;background:radial-gradient(circle,var(--sun),transparent 70%);opacity:.35}
+  .topbar{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+  .brand{font-size:12px;letter-spacing:3px;text-transform:uppercase;opacity:.85;font-weight:600}
+  .lang{display:flex;gap:4px;background:rgba(255,255,255,.14);border-radius:20px;padding:3px}
+  .lang button{border:none;background:none;color:#fff;font-size:12px;font-weight:700;padding:5px 10px;border-radius:16px;cursor:pointer;opacity:.6}
+  .lang button.on{background:#fff;color:var(--sea-deep);opacity:1}
+  .hero h1{font-size:25px;margin-top:14px;line-height:1.2;font-weight:800;position:relative;z-index:2}
+  .hero p{margin-top:8px;font-size:14px;opacity:.9;max-width:88%;position:relative;z-index:2}
+  /* WEATHER + TIME */
+  .wx{margin-top:16px;display:flex;gap:10px;position:relative;z-index:2}
+  .wx-box{flex:1;background:rgba(255,255,255,.14);backdrop-filter:blur(4px);border-radius:16px;padding:12px 14px}
+  .wx-box .lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;opacity:.75;font-weight:700}
+  .wx-box .big{font-size:22px;font-weight:900;margin-top:4px;font-variant-numeric:tabular-nums}
+  .wx-box .small{font-size:11px;opacity:.85;margin-top:2px}
+  .filters{display:flex;gap:8px;padding:16px 20px 4px;overflow-x:auto}
+  .filters::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap;padding:8px 16px;border-radius:20px;border:1.5px solid var(--line);background:#fff;font-size:13px;font-weight:600;color:var(--mute);cursor:pointer;transition:.15s}
+  .chip.active{background:var(--sea);color:#fff;border-color:var(--sea)}
+  .menu{padding:14px 20px 8px}
+  .card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 4px 18px rgba(6,65,73,.07);border:1px solid #f0e8d8}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .card h3{font-size:16px;font-weight:800;line-height:1.3}
+  .tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+  .tag.hot{background:#ffe8e2;color:var(--coral)}
+  .tag.new{background:#e2f4f0;color:var(--sea)}
+  .card .desc{font-size:13px;color:var(--mute);margin-top:6px;line-height:1.5}
+  .meta{display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--mute);flex-wrap:wrap}
+  .price-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)}
+  .price .from{font-size:11px;color:var(--mute)}
+  .price .now{font-size:20px;font-weight:900;color:var(--coral)}
+  .price .now small{font-size:12px;font-weight:600;color:var(--mute)}
+  .book-btn{background:var(--sea);color:#fff;border:none;padding:10px 18px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+  .book-btn:active{transform:scale(.96)}
+  .sync{margin:8px 20px 0;padding:14px 16px;background:#fff;border-radius:16px;border:1px dashed var(--sea);display:flex;align-items:center;gap:12px}
+  .sync .txt{flex:1}
+  .sync h4{font-size:14px;font-weight:800}
+  .sync p{font-size:12px;color:var(--mute);margin-top:2px}
+  .sync a{font-size:13px;font-weight:700;color:var(--sea);text-decoration:none;white-space:nowrap}
+  /* PARTNERS */
+  .partners{margin:16px 20px 0}
+  .partners h4{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--mute);font-weight:700;margin:0 4px 10px}
+  .partner{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #f0e8d8;border-radius:16px;padding:14px 16px;margin-bottom:10px;text-decoration:none;color:var(--ink);box-shadow:0 4px 18px rgba(6,65,73,.05)}
+  .partner .ic{width:42px;height:42px;border-radius:11px;background:#ee4d2d;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;flex-shrink:0}
+  .partner b{font-size:14px}
+  .partner p{font-size:12px;color:var(--mute);margin-top:2px}
+  .partner .arrow{margin-left:auto;color:var(--mute);font-size:18px}
+  .contact{margin:16px 20px 0;padding:16px;background:var(--sea-deep);color:#fff;border-radius:16px}
+  .contact h4{font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.8;margin-bottom:10px}
+  .contact a{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-size:14px;font-weight:600;padding:7px 0}
+  .contact a span{opacity:.7;font-weight:400;font-size:13px}
+  .overlay{position:fixed;inset:0;background:rgba(6,32,36,.55);display:none;align-items:flex-end;z-index:100}
+  .overlay.show{display:flex}
+  .sheet{background:#fff;width:100%;border-radius:24px 24px 0 0;padding:22px 20px 30px;animation:up .25s ease;position:relative;max-height:88vh;overflow-y:auto}
+  @keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .sheet-handle{width:40px;height:4px;background:var(--line);border-radius:4px;margin:0 auto 16px}
+  .sheet h3{font-size:18px;font-weight:800;padding-right:24px}
+  .sheet .sub{font-size:13px;color:var(--mute);margin-top:4px}
+  .sheet-total{display:flex;justify-content:space-between;align-items:center;margin:16px 0;padding:14px 16px;background:var(--sand);border-radius:14px}
+  .sheet-total b{font-size:20px;color:var(--coral)}
+  .pay-opt{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);margin-bottom:10px;cursor:pointer;transition:.15s;font-weight:700}
+  .pay-opt:active{transform:scale(.98)}
+  .pay-opt .ic{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:14px;flex-shrink:0}
+  .pay-opt small{font-weight:500;color:var(--mute)}
+  .zalo .ic{background:#0068ff}
+  .crypto .ic{background:#0098ea}
+  .okx .ic{background:#000}
+  .pay-opt .arrow{margin-left:auto;color:var(--mute)}
+  .close-x{position:absolute;top:18px;right:20px;font-size:22px;color:var(--mute);cursor:pointer}
+  .paylabel{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--mute);font-weight:700;margin:6px 0 10px}
+  .bottombar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:12px 20px calc(12px + env(safe-area-inset-bottom));display:flex;gap:12px;z-index:50}
+  .bottombar a{flex:1;text-align:center;padding:12px;border-radius:14px;font-weight:700;font-size:14px;text-decoration:none}
+  .bottombar .z{background:#0068ff;color:#fff}
+  .bottombar .w{background:var(--sand);color:var(--ink);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="topbar">
+    <div class="brand">Kodeeboyzz Tour</div>
+    <div class="lang" id="lang">
+      <button data-l="vi" class="on">VI</button>
+      <button data-l="en">EN</button>
+      <button data-l="ru">RU</button>
+    </div>
+  </div>
+  <h1 id="h-title"></h1>
+  <p id="h-sub"></p>
+  <div class="wx">
+    <div class="wx-box">
+      <div class="lbl" id="wx-lbl"></div>
+      <div class="big" id="wx-temp">--°C</div>
+      <div class="small" id="wx-desc">…</div>
+    </div>
+    <div class="wx-box">
+      <div class="lbl" id="tm-lbl"></div>
+      <div class="big" id="tm-clock">--:--:--</div>
+      <div class="small" id="tm-date">…</div>
+    </div>
+  </div>
+</div>
+
+<div class="filters" id="filters"></div>
+<div class="menu" id="menu"></div>
+
+<div class="sync">
+  <div class="txt"><h4 id="sync-h"></h4><p id="sync-p"></p></div>
+  <a href="https://kodeeboyzz.com" target="_blank">kodeeboyzz.com →</a>
+</div>
+
+<div class="partners">
+  <h4 id="pt-h"></h4>
+  <a class="partner" href="https://collshp.com/kodeewear20xx?view=storefront" target="_blank">
+    <div class="ic">S</div>
+    <div><b>Kodeewear20xx</b><p id="pt-store"></p></div>
+    <span class="arrow">›</span>
+  </a>
+  <a class="partner" href="https://s.shopee.vn/gOBspgmMC" target="_blank">
+    <div class="ic">🛒</div>
+    <div><b>Shopee</b><p id="pt-shop"></p></div>
+    <span class="arrow">›</span>
+  </a>
+</div>
+
+<div class="contact">
+  <h4 id="ct-h"></h4>
+  <a href="https://zalo.me/0775218017" target="_blank">💬 Zalo <span>0775 218 017</span></a>
+  <a href="https://t.me/Kodeeboyzz" target="_blank">✈️ Telegram <span>@Kodeeboyzz</span></a>
+  <a href="mailto:Kodeewear42xx@gmail.com">✉️ Email <span>Kodeewear42xx@gmail.com</span></a>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="sheet">
+    <span class="close-x" onclick="closeSheet()">✕</span>
+    <div class="sheet-handle"></div>
+    <h3 id="s-name"></h3>
+    <p class="sub" id="s-desc"></p>
+    <div class="sheet-total"><span id="s-tlabel"></span><b id="s-price"></b></div>
+    <div class="paylabel" id="s-paylabel"></div>
+    <div class="pay-opt zalo" onclick="pay('zalo')"><div class="ic">Za</div><div id="p-zalo"></div><span class="arrow">›</span></div>
+    <div class="pay-opt crypto" onclick="pay('crypto')"><div class="ic">₮</div><div id="p-crypto"></div><span class="arrow">›</span></div>
+    <div class="pay-opt okx" onclick="pay('okx')"><div class="ic">OKX</div><div id="p-okx"></div><span class="arrow">›</span></div>
+  </div>
+</div>
+
+<div class="bottombar">
+  <a class="z" href="https://zalo.me/0775218017" target="_blank" id="bb-zalo"></a>
+  <a class="w" href="https://kodeeboyzz.com" target="_blank" id="bb-web"></a>
+</div>
+
+<script>
+  const tg=window.Telegram?.WebApp; if(tg){tg.ready();tg.expand();}
+
+  // ====== LINKS ======
+  const ZALO='https://zalo.me/0775218017';
+  const WALLET='https://t.me/wallet/start?startapp=ref-3-FMzZ_Ai_vh0';
+  const OKX='https://okx.com/join/30371839';
+
+  // ====== TOUR — GIÁ KHỚP WEB KODEEBOYZZ.COM (SỬA Ở ĐÂY NẾU WEB ĐỔI GIÁ) ======
+  const TOURS=[
+    {id:1,cat:'boat',tag:'hot',dur:'9h',port:true,price:1650000,
+      name:{vi:'Tour 4 Đảo Cano + Cáp Treo Hòn Thơm',en:'4-Island Speedboat + Hon Thom Cable Car',ru:'Тур 4 острова на катере + канатка Хон Тхом'},
+      desc:{vi:'Xuất phát cảng An Thới · cano cao tốc · lặn san hô · ăn trưa hải sản · cáp treo vượt biển dài nhất thế giới.',en:'Departs An Thoi port · speedboat · snorkeling · seafood lunch · world\u2019s longest sea cable car.',ru:'Отправление из порта Ан Тхой · катер · снорклинг · обед · самая длинная морская канатка.'}},
+    {id:2,cat:'boat',tag:'',dur:'7h',port:true,price:1299000,
+      name:{vi:'Tour 3 Đảo Cano Lặn Ngắm San Hô',en:'3-Island Speedboat Snorkeling Tour',ru:'Тур 3 острова — снорклинг у рифов'},
+      desc:{vi:'Xuất phát cảng An Thới · nhóm nhỏ · lặn 3 điểm san hô đẹp nhất quần đảo An Thới · HDV riêng.',en:'Departs An Thoi port · small group · 3 best An Thoi reefs · private guide.',ru:'Из порта Ан Тхой · малая группа · 3 лучших рифа · личный гид.'}},
+    {id:3,cat:'cable',tag:'',dur:'—',port:false,price:850000,
+      name:{vi:'Vé Cáp Treo Hòn Thơm (Khứ hồi)',en:'Hon Thom Cable Car Ticket (Return)',ru:'Билет на канатку Хон Тхом (туда-обратно)'},
+      desc:{vi:'Ga đi tại An Thới · cáp treo vượt biển dài nhất thế giới · ngắm toàn cảnh quần đảo.',en:'Boards at An Thoi station · world\u2019s longest sea cable car · full panorama.',ru:'Станция в Ан Тхой · самая длинная морская канатка · панорама островов.'}},
+    {id:4,cat:'nature',tag:'new',dur:'8h',port:false,price:1050000,
+      name:{vi:'VQG Phú Quốc & Bãi Sao',en:'National Park & Sao Beach',ru:'Нацпарк Фукуок и пляж Сао'},
+      desc:{vi:'Trekking rừng nguyên sinh · Bãi Sao cát trắng · ăn trưa địa phương.',en:'Rainforest trekking · white-sand Sao Beach · local lunch.',ru:'Треккинг по джунглям · белый пляж Сао · местный обед.'}},
+    {id:5,cat:'vin',tag:'hot',dur:'1 ngày',port:false,price:950000,
+      name:{vi:'Vé VinWonders Phú Quốc 1 Ngày',en:'VinWonders Phu Quoc 1-Day Ticket',ru:'Билет VinWonders на 1 день'},
+      desc:{vi:'Công viên chủ đề lớn nhất VN · show · trò chơi · thủy cung.',en:'Vietnam\u2019s largest theme park · shows · rides · aquarium.',ru:'Крупнейший парк Вьетнама · шоу · аттракционы · океанариум.'}},
+    {id:6,cat:'vin',tag:'',dur:'1 ngày',port:false,price:650000,
+      name:{vi:'Vé Vinpearl Safari Phú Quốc',en:'Vinpearl Safari Ticket',ru:'Билет Vinpearl Safari'},
+      desc:{vi:'Vườn thú bán hoang dã lớn nhất VN · xe bus safari · biểu diễn.',en:'Largest semi-wild zoo · safari bus · shows.',ru:'Крупнейший полудикий зоопарк · сафари-автобус · шоу.'}},
+    {id:7,cat:'vin',tag:'new',dur:'1 ngày',port:false,price:1400000,
+      name:{vi:'Combo VinWonders + Safari (1 Ngày)',en:'Combo VinWonders + Safari (1 Day)',ru:'Комбо VinWonders + Safari'},
+      desc:{vi:'Tiết kiệm hơn mua lẻ · 2 công viên trong 1 ngày · vé QR ngay.',en:'Cheaper than separate tickets · 2 parks in 1 day · instant QR.',ru:'Дешевле раздельных билетов · 2 парка за день · QR сразу.'}},
+    {id:8,cat:'sunset',tag:'',dur:'Tối',port:false,price:660000,
+      name:{vi:'Cầu Hôn + Sunset Town + Show Kiss of the Sea',en:'Kiss Bridge + Sunset Town + Kiss of the Sea',ru:'Мост Поцелуев + Sunset Town + шоу'},
+      desc:{vi:'Thị trấn Hoàng Hôn An Thới · Cầu Hôn · show diễn 21:00 (trừ Thứ Ba).',en:'An Thoi Sunset Town · Kiss Bridge · show 21:00 (except Tue).',ru:'Сансет Таун Ан Тхой · Мост Поцелуев · шоу в 21:00 (кроме вт).'}}
+  ];
+
+  const CATS=[
+    {id:'all',vi:'Tất cả',en:'All',ru:'Все'},
+    {id:'boat',vi:'Cano An Thới',en:'An Thoi Boats',ru:'Катера Ан Тхой'},
+    {id:'cable',vi:'Cáp treo',en:'Cable Car',ru:'Канатка'},
+    {id:'vin',vi:'VinWonders & Safari',en:'VinWonders & Safari',ru:'VinWonders & Safari'},
+    {id:'nature',vi:'Thiên nhiên',en:'Nature',ru:'Природа'},
+    {id:'sunset',vi:'Hoàng hôn',en:'Sunset',ru:'Закат'}
+  ];
+
+  const T={
+    vi:{title:'Tour Phú Quốc<br>Đặt nhanh trong 30 giây',sub:'Giá tận gốc · Đón tận nơi · Xác nhận liền qua Zalo',
+      wxLbl:'Thời tiết Phú Quốc',tmLbl:'Giờ Phú Quốc',book:'Đặt ngay',per:'/khách',from:'Chỉ từ',port:'⚓ Cảng An Thới',
+      syncH:'Xem thêm tour & video thật',syncP:'Đồng bộ với website chính',ptH:'Partners · Tham gia mua sắm',
+      ptStore:'Storefront thời trang chính thức',ptShop:'Deal hot mỗi ngày trên Shopee',ctH:'Liên hệ đặt tour',
+      tlabel:'Tổng thanh toán',paylabel:'Chọn cách thanh toán',
+      zalo:'Zalo',zaloS:'Chuyển khoản & xác nhận qua Zalo',crypto:'Crypto USDT',cryptoS:'Telegram Wallet',okx:'OKX Pay',okxS:'Thanh toán qua OKX',
+      bbZalo:'💬 Chat Zalo',bbWeb:'🌐 Website',hot:'🔥 Hot',new:'✨ Mới',
+      wx:{0:'Trời quang',1:'Ít mây',2:'Có mây',3:'Nhiều mây',45:'Sương mù',51:'Mưa phùn',61:'Mưa nhỏ',63:'Mưa vừa',65:'Mưa to',80:'Mưa rào',95:'Dông'}},
+    en:{title:'Phu Quoc Tours<br>Book in 30 seconds',sub:'Local prices · Hotel pickup · Instant Zalo confirmation',
+      wxLbl:'Phu Quoc Weather',tmLbl:'Phu Quoc Time',book:'Book now',per:'/pax',from:'From',port:'⚓ An Thoi Port',
+      syncH:'More tours & real videos',syncP:'Synced with main website',ptH:'Partners · Shop with us',
+      ptStore:'Official fashion storefront',ptShop:'Daily hot deals on Shopee',ctH:'Contact to book',
+      tlabel:'Total',paylabel:'Choose payment',
+      zalo:'Zalo',zaloS:'Transfer & confirm via Zalo',crypto:'Crypto USDT',cryptoS:'Telegram Wallet',okx:'OKX Pay',okxS:'Pay via OKX',
+      bbZalo:'💬 Chat Zalo',bbWeb:'🌐 Website',hot:'🔥 Hot',new:'✨ New',
+      wx:{0:'Clear',1:'Mostly clear',2:'Partly cloudy',3:'Cloudy',45:'Fog',51:'Drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',80:'Showers',95:'Thunderstorm'}},
+    ru:{title:'Туры по Фукуоку<br>Бронь за 30 секунд',sub:'Местные цены · Трансфер · Подтверждение в Zalo',
+      wxLbl:'Погода на Фукуоке',tmLbl:'Время на Фукуоке',book:'Забронировать',per:'/чел',from:'От',port:'⚓ Порт Ан Тхой',
+      syncH:'Больше туров и видео',syncP:'Синхронизировано с сайтом',ptH:'Партнёры · Покупки',
+      ptStore:'Официальный магазин одежды',ptShop:'Горячие скидки на Shopee',ctH:'Связаться для брони',
+      tlabel:'Итого',paylabel:'Способ оплаты',
+      zalo:'Zalo',zaloS:'Перевод и подтверждение в Zalo',crypto:'Крипто USDT',cryptoS:'Telegram Wallet',okx:'OKX Pay',okxS:'Оплата через OKX',
+      bbZalo:'💬 Чат Zalo',bbWeb:'🌐 Сайт',hot:'🔥 Хит',new:'✨ Новое',
+      wx:{0:'Ясно',1:'Малооблачно',2:'Переменная облачность',3:'Облачно',45:'Туман',51:'Морось',61:'Небольшой дождь',63:'Дождь',65:'Ливень',80:'Ливни',95:'Гроза'}}
+  };
+
+  let lang='vi', curCat='all', current=null;
+  const fmt=n=>n.toLocaleString('vi-VN')+'đ';
+
+  // ====== ĐỒNG HỒ GIỜ PHÚ QUỐC (GMT+7, realtime) ======
+  function tick(){
+    const now=new Date();
+    const opts={timeZone:'Asia/Ho_Chi_Minh'};
+    const time=now.toLocaleTimeString('vi-VN',{...opts,hour12:false});
+    const locale=lang==='ru'?'ru-RU':lang==='en'?'en-GB':'vi-VN';
+    const date=now.toLocaleDateString(locale,{...opts,weekday:'short',day:'numeric',month:'short'});
+    document.getElementById('tm-clock').textContent=time;
+    document.getElementById('tm-date').textContent=date+' · GMT+7';
+  }
+  setInterval(tick,1000);
+
+  // ====== THỜI TIẾT PHÚ QUỐC (Open-Meteo, free, không cần key) ======
+  let wxData=null;
+  async function loadWeather(){
+    try{
+      const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=10.2899&longitude=103.984&current=temperature_2m,weather_code,wind_speed_10m&timezone=Asia%2FBangkok');
+      const d=await r.json();
+      wxData=d.current;
+      renderWeather();
+    }catch(e){
+      document.getElementById('wx-desc').textContent='—';
+    }
+  }
+  function wxCode(c){
+    const m=T[lang].wx;
+    if(m[c])return m[c];
+    if(c>=51&&c<=57)return m[51]; if(c>=61&&c<=67)return m[63];
+    if(c>=80&&c<=82)return m[80]; if(c>=95)return m[95];
+    return m[3];
+  }
+  function wxIcon(c){
+    if(c===0)return'☀️'; if(c<=2)return'🌤️'; if(c===3)return'☁️';
+    if(c===45||c===48)return'🌫️'; if(c>=95)return'⛈️';
+    if(c>=51)return'🌧️'; return'☁️';
+  }
+  function renderWeather(){
+    if(!wxData)return;
+    document.getElementById('wx-temp').textContent=Math.round(wxData.temperature_2m)+'°C';
+    document.getElementById('wx-desc').textContent=wxIcon(wxData.weather_code)+' '+wxCode(wxData.weather_code)+' · 💨 '+Math.round(wxData.wind_speed_10m)+' km/h';
+  }
+  loadWeather();
+  setInterval(loadWeather,15*60*1000); // refresh 15 phút
+
+  function renderChrome(){
+    const s=T[lang];
+    document.getElementById('h-title').innerHTML=s.title;
+    document.getElementById('h-sub').textContent=s.sub;
+    document.getElementById('wx-lbl').textContent=s.wxLbl;
+    document.getElementById('tm-lbl').textContent=s.tmLbl;
+    document.getElementById('sync-h').textContent=s.syncH;
+    document.getElementById('sync-p').textContent=s.syncP;
+    document.getElementById('pt-h').textContent=s.ptH;
+    document.getElementById('pt-store').textContent=s.ptStore;
+    document.getElementById('pt-shop').textContent=s.ptShop;
+    document.getElementById('ct-h').textContent=s.ctH;
+    document.getElementById('bb-zalo').textContent=s.bbZalo;
+    document.getElementById('bb-web').textContent=s.bbWeb;
+    document.getElementById('filters').innerHTML=CATS.map(c=>
+      `<div class="chip ${c.id===curCat?'active':''}" data-cat="${c.id}">${c[lang]}</div>`).join('');
+    document.querySelectorAll('.chip').forEach(c=>c.onclick=()=>{curCat=c.dataset.cat;renderChrome();renderMenu();});
+    renderWeather(); tick();
+  }
+
+  function renderMenu(){
+    const s=T[lang];
+    const list=curCat==='all'?TOURS:TOURS.filter(t=>t.cat===curCat);
+    document.getElementById('menu').innerHTML=list.map(t=>`
+      <div class="card">
+        <div class="card-top">
+          <h3>${t.name[lang]}</h3>
+          ${t.tag?`<span class="tag ${t.tag}">${t.tag==='hot'?s.hot:s.new}</span>`:''}
+        </div>
+        <p class="desc">${t.desc[lang]}</p>
+        <div class="meta"><span>🕒 ${t.dur}</span>${t.port?`<span>${s.port}</span>`:''}</div>
+        <div class="price-row">
+          <div class="price">
+            <div class="from">${s.from}</div>
+            <div class="now">${fmt(t.price)} <small>${s.per}</small></div>
+          </div>
+          <button class="book-btn" onclick="openSheet(${t.id})">${s.book}</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function openSheet(id){
+    const s=T[lang]; current=TOURS.find(t=>t.id===id);
+    document.getElementById('s-name').textContent=current.name[lang];
+    document.getElementById('s-desc').textContent=current.desc[lang];
+    document.getElementById('s-tlabel').textContent=s.tlabel;
+    document.getElementById('s-price').textContent=fmt(current.price);
+    document.getElementById('s-paylabel').textContent=s.paylabel;
+    document.getElementById('p-zalo').innerHTML=`${s.zalo}<br><small>${s.zaloS}</small>`;
+    document.getElementById('p-crypto').innerHTML=`${s.crypto}<br><small>${s.cryptoS}</small>`;
+    document.getElementById('p-okx').innerHTML=`${s.okx}<br><small>${s.okxS}</small>`;
+    document.getElementById('overlay').classList.add('show');
+  }
+  function closeSheet(){document.getElementById('overlay').classList.remove('show');}
+  document.getElementById('overlay').onclick=e=>{if(e.target.id==='overlay')closeSheet();};
+
+  function pay(method){
+    const msg=`Đặt tour: ${current.name.vi}\nGiá: ${fmt(current.price)}${T[lang].per}\nThanh toán: ${method.toUpperCase()}`;
+    if(tg&&tg.sendData){try{tg.sendData(JSON.stringify({tour:current.name.vi,price:current.price,method}));}catch(e){}}
+    if(method==='crypto')window.open(WALLET,'_blank');
+    else if(method==='okx')window.open(OKX,'_blank');
+    else window.open(`${ZALO}?text=${encodeURIComponent(msg)}`,'_blank');
+  }
+
+  document.querySelectorAll('#lang button').forEach(b=>b.onclick=()=>{
+    lang=b.dataset.l;
+    document.querySelector('#lang .on').classList.remove('on');
+    b.classList.add('on');
+    document.documentElement.lang=lang;
+    renderChrome();renderMenu();
+  });
+
+  renderChrome();renderMenu();
+</script>
+</body>
+</html>
